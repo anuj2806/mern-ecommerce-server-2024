@@ -2,9 +2,9 @@ import mongoose from "mongoose";
 import { InvalidateCacheProps, OrderItemType } from "../types/types.js";
 import { Product } from "../models/product.js";
 import { myCache } from "../app.js";
-export const connectDB = () => {
+export const connectDB = (uri:string) => {
     mongoose
-      .connect("mongodb://127.0.0.1:27017/", {
+      .connect(uri, {
         dbName: "Ecommerce_24",
       })
       .then((c) => console.log(`DB Connected to ${c.connection.host}`))
@@ -33,6 +33,9 @@ export const invalidateCache = async ({product,order,admin,userId,orderId,produc
 
     myCache.del(ordersKeys);
   }
+  if (admin){
+    myCache.del(["admin-stats"]);
+  }
 }
 
 export const reduceStock = async (orderItems: OrderItemType[]) => {
@@ -43,4 +46,9 @@ export const reduceStock = async (orderItems: OrderItemType[]) => {
     product.stock -= order.quantity;
     await product.save();
   }
+};
+
+export const calculatePercentage = (thisMonth:number,lastMonth:number) =>{
+  if (lastMonth==0) return Number((thisMonth*100).toFixed(0));
+  return Number((((thisMonth)/lastMonth)*100).toFixed(0));
 };

@@ -1,9 +1,9 @@
 import mongoose from "mongoose";
 import { Product } from "../models/product.js";
 import { myCache } from "../app.js";
-export const connectDB = () => {
+export const connectDB = (uri) => {
     mongoose
-        .connect("mongodb://127.0.0.1:27017/", {
+        .connect(uri, {
         dbName: "Ecommerce_24",
     })
         .then((c) => console.log(`DB Connected to ${c.connection.host}`))
@@ -26,6 +26,9 @@ export const invalidateCache = async ({ product, order, admin, userId, orderId, 
         ];
         myCache.del(ordersKeys);
     }
+    if (admin) {
+        myCache.del(["admin-stats"]);
+    }
 };
 export const reduceStock = async (orderItems) => {
     for (let i = 0; i < orderItems.length; i++) {
@@ -36,4 +39,9 @@ export const reduceStock = async (orderItems) => {
         product.stock -= order.quantity;
         await product.save();
     }
+};
+export const calculatePercentage = (thisMonth, lastMonth) => {
+    if (lastMonth == 0)
+        return Number((thisMonth * 100).toFixed(0));
+    return Number((((thisMonth) / lastMonth) * 100).toFixed(0));
 };

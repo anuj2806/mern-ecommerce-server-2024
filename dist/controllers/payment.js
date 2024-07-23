@@ -1,6 +1,21 @@
+import { razorPay } from "../app.js";
 import { TryCatch } from "../middlewares/error.js";
 import { Coupon } from "../models/coupon.js";
 import ErrorHandler from "../utils/utility-class.js";
+export const createPaymentIntent = TryCatch(async (req, res, next) => {
+    const { amount } = req.body;
+    if (!amount)
+        return next(new ErrorHandler("Please enter amount", 400));
+    const PaymentIntent = await razorPay.orders.create({
+        amount: Number(amount) * 100,
+        currency: "INR",
+        receipt: "order_rcptid_11"
+    });
+    return res.status(200).json({
+        success: true,
+        clientScreat: PaymentIntent
+    });
+});
 export const newCoupon = TryCatch(async (req, res, next) => {
     const { code, amount } = req.body;
     if (!code || !amount)
