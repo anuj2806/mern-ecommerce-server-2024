@@ -2,7 +2,7 @@ import express from "express";
 import { errorMiddleware } from "./middlewares/error.js";
 import { connectDB } from "./utils/features.js";
 import NodeCache from "node-cache";
-
+import cors from "cors";
 // Importing Routes
 import userRoute from "./routes/user.js";
 import productRoute from './routes/product.js';
@@ -30,7 +30,7 @@ export const myCache = new NodeCache();
 
 const app = express();
 app.use(express.json()); //this is middleware
-
+app.use(cors());
 
 app.use('/api/v1/user',userRoute);
 app.use('/api/v1/product',productRoute);
