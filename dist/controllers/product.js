@@ -25,7 +25,7 @@ export const getAllCategories = TryCatch(async (req, res, next) => {
     }
     else {
         categories = await Product.distinct("category");
-        myCache.set("latest-products", JSON.stringify(categories));
+        myCache.set("all-products", JSON.stringify(categories));
     }
     return res.status(201).json({
         success: true,
